@@ -9,6 +9,8 @@ on early-init
 # create mountpoints
     mkdir /mnt 0775 root system
 
+    import /init.b2g.rc
+
 on init
 
 sysclktz 0
@@ -380,9 +382,9 @@ service servicemanager /system/bin/servicemanager
     user system
     group system
     critical
-    onrestart restart zygote
+#    onrestart restart zygote
     onrestart restart media
-    onrestart restart surfaceflinger
+#    onrestart restart surfaceflinger
     onrestart restart drm
 
 service vold /system/bin/vold
@@ -400,24 +402,24 @@ service debuggerd /system/bin/debuggerd
 
 service ril-daemon /system/bin/rild
     class main
-    socket rild stream 660 root radio
+    socket rild stream 666 root radio
     socket rild-debug stream 660 radio system
     user root
     group radio cache inet misc audio sdcard_rw log
 
-service surfaceflinger /system/bin/surfaceflinger
-    class main
-    user system
-    group graphics
-    onrestart restart zygote
+#service surfaceflinger /system/bin/surfaceflinger
+#    class main
+#    user system
+#    group graphics
+#    onrestart restart zygote
 
-service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
-    class main
-    socket zygote stream 666
-    onrestart write /sys/android_power/request_state wake
-    onrestart write /sys/power/state on
-    onrestart restart media
-    onrestart restart netd
+#service zygote /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
+#    class main
+#    socket zygote stream 666
+#    onrestart write /sys/android_power/request_state wake
+#    onrestart write /sys/power/state on
+#    onrestart restart media
+#    onrestart restart netd
 
 service drm /system/bin/drmserver
     class main
@@ -487,3 +489,4 @@ service dumpstate /system/bin/dumpstate -s
     socket dumpstate stream 0660 shell log
     disabled
     oneshot
+
