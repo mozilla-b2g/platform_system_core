@@ -13,6 +13,12 @@ on boot
     setprop ro.build.product generic
     setprop ro.product.device generic
 
+# Bluetooth related settings
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /dev/ttyS2
+    chmod 0660 /dev/ttyS2
+
 # fake some battery state
     setprop status.battery.state Slow
     setprop status.battery.level 5
@@ -75,4 +81,11 @@ service qemud /system/bin/qemud
 # if not, is simply exits immediately
 
 service goldfish-logcat /system/bin/logcat -Q
+    oneshot
+
+service hciattach /system/bin/sh /system/etc/init.goldfish.bt.sh
+    class late_start
+    user bluetooth
+    group bluetooth net_bt_admin
+    disabled
     oneshot

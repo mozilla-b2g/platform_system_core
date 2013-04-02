@@ -32,6 +32,13 @@ $(copy_to) : $(TARGET_OUT)/% : $(LOCAL_PATH)/% | $(ACP)
 
 ALL_PREBUILT += $(copy_to)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE       := init.goldfish.bt.sh
+LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES    := etc/init.goldfish.bt.sh
+LOCAL_MODULE_PATH  := $(TARGET_OUT_ETC)
+include $(BUILD_PREBUILT)
 
 # files that live under /...
 
