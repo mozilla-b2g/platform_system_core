@@ -1,4 +1,5 @@
 import /init.${ro.hardware}.rc
+import /init.b2g.debug.rc
 
 on early-init
     # Set init and its forked children's oom_adj.
