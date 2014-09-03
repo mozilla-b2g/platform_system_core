@@ -34,6 +34,8 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libcutils libc
 include $(BUILD_EXECUTABLE)
 
+# TODO: try to apply a real fix for |fconstd| (VFPv3) error
+ifdef VANILLA_UPSTREAM_BUILD
 ifeq ($(ARCH_ARM_HAVE_VFP),true)
 include $(CLEAR_VARS)
 
@@ -49,5 +51,6 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libcutils libc
 include $(BUILD_EXECUTABLE)
 endif # ARCH_ARM_HAVE_VFP == true
+endif # VANILLA_UPSTREAM_BUILD
 
 endif # arm or x86 in TARGET_ARCH
