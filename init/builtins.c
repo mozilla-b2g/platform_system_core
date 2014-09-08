@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <sys/mount.h>
 #include <sys/resource.h>
+#include <sys/wait.h>
 #include <linux/loop.h>
 #include <cutils/partition_utils.h>
 
@@ -176,7 +177,57 @@ int do_domainname(int nargs, char **args)
 
 int do_exec(int nargs, char **args)
 {
+    const char* exe = args[1];
+    char** argv = &args[1];
+    char** envp = (char**)NULL;
+    pid_t c;
+    int status;
+
+    ERROR("%s: forking ...\n", __FUNCTION__);
+
+    c = fork();
+    if (0 > c) {
+        return -errno;
+    }
+    if (0 == c) {
+
+
+        ERROR("%s: execing %s ...\n", __FUNCTION__, exe);
+
+
+        execve(exe, argv, envp);
+        ERROR("execve(%s) failed\n", exe);
+        _exit(127);
+    }
+
+    ERROR("%s: waitpid on %d ...\n", __FUNCTION__, c);
+
+    /* TODO: handle EINTR and ECHILD */
+    waitpid(c, &status, 0);
+    if (WIFEXITED(status)) {
+
+
+        ERROR("%s: exited with status %d ...\n", __FUNCTION__, WEXITSTATUS(status));
+
+
+        return -WEXITSTATUS(status);
+    }
+    if (WIFSIGNALED(status)) {
+        ERROR("%s killed by signal %d\n", exe, WTERMSIG(status));
+        return -1;
+    }
+    if (WIFSTOPPED(status)) {
+        ERROR("%s stopped by signal %d\n", exe, WSTOPSIG(status));
+        kill(c, 9);
+        return -1;
+    }
+    ERROR("nonsensical waitpid status for %s\n", exe);
+    kill(c, 9);
     return -1;
+
+
+    /* OMFG...
+       return -1;*/
 }
 
 int do_export(int nargs, char **args)
